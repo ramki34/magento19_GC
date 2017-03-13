@@ -5,11 +5,40 @@
             <version>0.1.0</version>
         </CommerceShop_Giftcard>
     </modules>    
-    <global>         
+    <frontend>
+        <routers>
+            <csgiftcard>
+                <use>standard</use>
+                <args>
+                    <module>CommerceShop_Giftcard</module>
+                    <frontName>csgiftcard</frontName>
+                </args>
+            </csgiftcard>
+        </routers>
+        <layout>
+            <updates>
+                <csgiftcard>
+                    <file>csgiftcard.xml</file>
+                </csgiftcard>
+            </updates>
+        </layout>
+    </frontend>
+
+    <global>        
+    <helpers>
+            <csgiftcard>
+                <class>CommerceShop_Giftcard_Helper</class>
+            </csgiftcard>
+    </helpers>
+    <blocks>
+            <csgiftcard>
+                <class>CommerceShop_Giftcard_Block</class>
+            </csgiftcard>
+    </blocks> 
      <models>
-            <csgift>
+            <csgiftcard>
                 <class>CommerceShop_Giftcard_Model</class>               
-            </csgift>
+            </csgiftcard>
      </models>     
      <resources>
             <csgiftcard_setup>
@@ -27,8 +56,8 @@
                 <type>
                     <csgiftcard translate="label" module="catalog">
                         <label>CS Giftcard</label>
-                        <model>csgift/product_type_gift</model>
-                        <price_model>csgift/product_price</price_model>                        
+                        <model>csgiftcard/product_type_gift</model>
+                        <price_model>csgiftcard/product_price</price_model>                        
                         <is_qty>1</is_qty>      
                     </csgiftcard>
                 </type>
