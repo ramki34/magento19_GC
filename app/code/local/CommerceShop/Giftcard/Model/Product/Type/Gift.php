@@ -1,0 +1,5 @@
+<?php
+class CommerceShop_Giftcard_Model_Product_Type_Gift extends Mage_Catalog_Model_Product_Type_Abstract
+{
+
+}

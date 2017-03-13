@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <CommerceShop_Giftcard>
+            <active>true</active>
+            <codePool>local</codePool>
+        </CommerceShop_Giftcard>
+    </modules>
+</config>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <CommerceShop_Giftcard>
+            <version>0.1.0</version>
+        </CommerceShop_Giftcard>
+    </modules>    
+    <global>         
+     <models>
+            <csgift>
+                <class>CommerceShop_Giftcard_Model</class>               
+            </csgift>
+     </models>     
+     <resources>
+            <csgiftcard_setup>
+                <setup>
+                    <module>CommerceShop_Giftcard</module>
+                    <class>Mage_Catalog_Model_Resource_Eav_Mysql4_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </csgiftcard_setup>
+        </resources>      
+        <catalog>
+            <product>
+                <type>
+                    <csgiftcard translate="label" module="catalog">
+                        <label>CS Giftcard</label>
+                        <model>csgift/product_type_gift</model>
+                        <price_model>csgift/product_price</price_model>                        
+                        <is_qty>1</is_qty>      
+                    </csgiftcard>
+                </type>
+			</product>        
+        </catalog>
+	</global>    
+</config>
