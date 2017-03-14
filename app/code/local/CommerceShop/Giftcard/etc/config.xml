@@ -2,7 +2,7 @@
 <config>
     <modules>
         <CommerceShop_Giftcard>
-            <version>0.1.0</version>
+            <version>0.2.0</version>
         </CommerceShop_Giftcard>
     </modules>    
     <frontend>
@@ -63,5 +63,18 @@
                 </type>
 			</product>        
         </catalog>
+
+        <sales>
+            <quote>
+                <totals>
+                    <cs_gift_card_total>
+                        <class>csgiftcard/sales_quote_total_giftcard</class>
+                        <after>discount,tax</after>
+                        <before>grand_total</before>
+                    </cs_gift_card_total>
+                </totals>
+            </quote>
+        </sales>
+
 	</global>    
 </config>

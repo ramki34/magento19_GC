@@ -1,16 +1,36 @@
 <?php
-$action=Mage::getBaseUrl().'csgiftcard/';
+$applyAction=Mage::getBaseUrl().'csgiftcard/gift/apply';
+$removeAction=Mage::getBaseUrl().'csgiftcard/gift/remove';
 ?>
-<form id="csgift-coupon-form" action="<?php echo $action;?>" method="post">
+
+<?php if($AppliedGiftCards=Mage::helper('csgiftcard')->getAppliedGiftCards()){ ?>
+<form id="csgift-remove" action="<?php echo $removeAction;?>" method="post">
+        <h2>Remove Gift Codes</h2> 
+
+        <?php foreach($AppliedGiftCards as $cards){ ?>        
+            <div class="field-wrapper">
+                <input class="input-text csgift_code_remove " type="hidden" id="csgift_code_remove" name="csgift_code_remove" value="">
+                
+               <button type="button" title="Cancel" class="button2 giftremove" value="<?php 
+               echo $cards['newgiftCode'];?>">
+                  <label for="applied-cards"><?php echo $cards['newgiftCode'];?></label><span><span class='remove-code' value=<?php echo $cards['newgiftCode'];?> >Cancel</span></span>
+                </button>
+                
+            </div>
+            <?php } ?>
+</form>    
+
+<?php } ?>
+
+<form id="csgift-coupon-form" action="<?php echo $applyAction;?>" method="post">
     <div class="csgift">
-        <h2>Gift Codes</h2>
+        <h2>Add Gift Codes</h2>
         <div class="csgift-form">
-            <label for="csgift_code">Gift Codes</label>
-            <input type="hidden" name="remove" id="remove-code" value="0">
+            <label for="csgift_code">Gift Codes</label>            
             <div class="field-wrapper">
                 <input class="input-text" type="text" id="csgift_code" name="csgift_code" value="">
                 <div class="button-wrapper">
-                    <button type="button" title="Apply" class="button2" onclick="csgiftForm.submit(false)" value="Apply">
+                    <button type="button" title="Apply" class="button2" onclick="csgiftForm.submit()" value="Apply">
                         <span><span>Apply</span></span>
                     </button>
                 </div>
@@ -20,16 +40,17 @@ $action=Mage::getBaseUrl().'csgiftcard/';
 </form>
 
 <script type="text/javascript">
+
+var csgiftRemove = new VarienForm('csgift-remove');
+jQuery('.giftremove').click(function(){    
+    var removeCode=jQuery(this).attr('value');
+    jQuery('.csgift_code_remove').val(removeCode);
+    return VarienForm.prototype.submit.bind(csgiftRemove)();
+});
+
 //<![CDATA[
 var csgiftForm = new VarienForm('csgift-coupon-form');
-csgiftForm.submit = function (isRemove) {
-    if (isRemove) {
-        $('csgift_code').removeClassName('required-entry');
-        $('remove-code').value = "1";
-    } else {
-        $('csgift_code').addClassName('required-entry');
-        $('remove-code').value = "0";
-    }
+csgiftForm.submit = function () {   
     return VarienForm.prototype.submit.bind(csgiftForm)();
 }
 //]]>
