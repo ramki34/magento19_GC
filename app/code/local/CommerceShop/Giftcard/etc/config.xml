@@ -39,7 +39,20 @@
             <csgiftcard>
                 <class>CommerceShop_Giftcard_Model</class>               
             </csgiftcard>
-     </models>     
+     </models>    
+    <events>
+      <sales_order_place_after>
+        <observers>
+          <giftcard_purchase_mail>
+            <type>singleton</type>
+            <class>csgiftcard/observer</class>
+            <method>sendGiftCardPurchaseMail</method>
+          </giftcard_purchase_mail>
+        </observers>
+      </sales_order_place_after>
+    </events>
+
+
      <resources>
             <csgiftcard_setup>
                 <setup>
@@ -50,7 +63,20 @@
                     <use>core_setup</use>
                 </connection>
             </csgiftcard_setup>
-        </resources>      
+    </resources> 
+   
+     <template>
+            <email>
+                <csgiftcard_purchase_email_template translate="label" module="csgiftcard">
+                    <label>Giftcard Purchase</label>
+                    <file>cs_giftcard_purchase_new.html</file>
+                    <type>html</type>
+                </csgiftcard_purchase_email_template>
+            </email>
+    </template>
+
+
+
         <catalog>
             <product>
                 <type>

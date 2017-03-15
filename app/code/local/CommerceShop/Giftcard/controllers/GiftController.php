@@ -2,7 +2,7 @@
 class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Action
 {
     public function applyAction()
-    {   
+    {
         $post        = $this->getRequest()->getPost();
         $newgiftCode = $post['csgift_code'];
         $newgiftBal  = 200;
@@ -84,5 +84,10 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
         }
         
         return null;
+    }
+    
+    public function carddeliveryAction()
+    {
+        echo 'carddelivery';
     }
 }

@@ -1,6 +1,12 @@
 <?php
 class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    
+    CONST CS_GIFT_PRODUCT_TYPE = 'csgiftcard';
+    CONST CS_GIFT_PURCHASE_EMAIL_TEMPLATE = 'csgiftcard_purchase_email_template';
+    
+    CONST XML_PATH_UPDATE_EMAIL_IDENTITY = 'sales_email/order_comment/identity';
+    
     public function getGiftCardValue()
     {
         $giftInfo = Mage::getSingleton('checkout/session')->getQuote()->getData('cs_gift_card');
@@ -22,9 +28,52 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
             return unserialize($isAlreadyAppliedCards);
     }
     
-    public function cslog($data)
+    public function isGiftCardPurchased($order)
     {
-    	Mage::log($data, null, 'csgiftcard.log');
+        $allVisibleItems = $order->getAllVisibleItems();
+        foreach ($allVisibleItems as $item) {
+            if ($item->getProductType() == self::CS_GIFT_PRODUCT_TYPE) {
+                $giftItems[] = array(
+                    'product_id' => $item->getData('product_id'),
+                    'sku' => $item->getData('sku')
+                );
+            }
+        }
+        return $giftItems ? $giftItems : array();
     }
     
-} 
+    
+    public function sendGiftCardPurchaseMail($to, $templateParams, $sender = null)
+    {
+        $template = self::CS_GIFT_PURCHASE_EMAIL_TEMPLATE;
+        $sender   = $sender ? $sender : self::XML_PATH_UPDATE_EMAIL_IDENTITY;       
+        
+        try {
+            $this->sendMail($to, $template, $templateParams, $sender);
+        }
+        catch (Exception $e) {
+            Mage::helper('csgiftcard')->cslog($e->getMessage());
+        }
+        
+    }
+    
+    public function sendMail($to, $template, $templateParams, $sender)
+    {
+        $storeId   = Mage::app()->getStore()->getId();
+        $mailer    = Mage::getModel('core/email_template_mailer');
+        $emailInfo = Mage::getModel('core/email_info');
+        $emailInfo->addTo($to['email'], $to['name']);
+        $mailer->addEmailInfo($emailInfo);
+        $mailer->setSender(Mage::getStoreConfig($sender, $storeId));
+        $mailer->setStoreId($storeId);
+        $mailer->setTemplateId((string) $template);
+        $mailer->setTemplateParams($templateParams);
+        $mailer->send();
+    }
+    
+    public function cslog($data)
+    {
+        Mage::log($data, null, 'csgiftcard.log');
+    }
+    
+}
