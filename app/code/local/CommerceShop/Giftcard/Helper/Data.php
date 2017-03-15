@@ -24,7 +24,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     
     public function cslog($data)
     {
-        Mage::log($data, null, 'csgiftcard.log');
+    	Mage::log($data, null, 'csgiftcard.log');
     }
     
 } 

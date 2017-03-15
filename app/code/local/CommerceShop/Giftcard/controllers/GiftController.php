@@ -2,16 +2,32 @@
 class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Action
 {
     public function applyAction()
-    {
+    {   
         $post        = $this->getRequest()->getPost();
         $newgiftCode = $post['csgift_code'];
-        $newgiftBal  = -200;
+        $newgiftBal  = 200;
         
         // need to call API for to get available balance.
         
-        $quote    = Mage::getSingleton('checkout/session')->getQuote();
-        $giftInfo = '';
-        $error    = '';
+        $quote                  = Mage::getSingleton('checkout/session')->getQuote();
+        $grandTotal             = $quote->getData('grand_total');
+        $appliedGiftcardBalance = Mage::helper('csgiftcard')->getGiftCardValue();
+        
+        if ($grandTotal == 0) {
+            $this->_getSession()->addError('Grand Total must be grater then 0');
+            $this->_redirect('checkout/cart');
+            return;
+        }
+        
+        if ($grandTotal < $newgiftBal) {
+            $newgiftBal = $grandTotal;
+        }
+        
+        
+        
+        $newgiftBal = -$newgiftBal;
+        $giftInfo   = '';
+        $error      = '';
         if ($isAlreadyAppliedCards = $quote->getData('cs_gift_card')) {
             $applied = unserialize($isAlreadyAppliedCards);
             foreach ($applied as $appl) {
