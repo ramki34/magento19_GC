@@ -72,6 +72,12 @@
                     <file>cs_giftcard_purchase_new.html</file>
                     <type>html</type>
                 </csgiftcard_purchase_email_template>
+
+                 <csgiftcard_recipient_email_template translate="label" module="csgiftcard">
+                    <label>Giftcard Recipient</label>
+                    <file>cs_giftcard_recipient.html</file>
+                    <type>html</type>
+                </csgiftcard_recipient_email_template>
             </email>
     </template>
 

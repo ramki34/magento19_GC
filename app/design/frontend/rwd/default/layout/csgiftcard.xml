@@ -5,6 +5,22 @@
             <block type="csgiftcard/gift" name="csgiftcard_form" template="csgiftcard/cart/form.phtml" />
         </reference>
     </checkout_cart_index>
+
+    <csgiftcard_gift_carddelivery>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_carddelivery_form" template="csgiftcard/carddelivery.phtml" />
+        </reference>
+    </csgiftcard_gift_carddelivery>
+
+
+    <!-- <csgiftcard_gift_sendcardinfo>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_carddelivery_send" template="csgiftcard/sendcardinfo.phtml" />
+        </reference>
+    </csgiftcard_gift_sendcardinfo> -->
+
+    
+
 </layout>
 
 

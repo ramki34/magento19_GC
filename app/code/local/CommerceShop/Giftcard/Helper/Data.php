@@ -4,7 +4,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     
     CONST CS_GIFT_PRODUCT_TYPE = 'csgiftcard';
     CONST CS_GIFT_PURCHASE_EMAIL_TEMPLATE = 'csgiftcard_purchase_email_template';
-    
+    CONST CS_GIFT_RECIPIENT_EMAIL_TEMPLATE = 'csgiftcard_recipient_email_template';    
     CONST XML_PATH_UPDATE_EMAIL_IDENTITY = 'sales_email/order_comment/identity';
     
     public function getGiftCardValue()
@@ -46,7 +46,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     public function sendGiftCardPurchaseMail($to, $templateParams, $sender = null)
     {
         $template = self::CS_GIFT_PURCHASE_EMAIL_TEMPLATE;
-        $sender   = $sender ? $sender : self::XML_PATH_UPDATE_EMAIL_IDENTITY;       
+        $sender   = $sender ? $sender : Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_IDENTITY, $this->getStoreId());
         
         try {
             $this->sendMail($to, $template, $templateParams, $sender);
@@ -56,20 +56,39 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
         }
         
     }
+
+
+     public function sendGiftCardRecipientMail($to, $templateParams, $sender = null)
+    {
+        $template = self::CS_GIFT_RECIPIENT_EMAIL_TEMPLATE;
+        $sender   = $sender ? $sender : Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_IDENTITY, $this->getStoreId());       
+        try {
+            $this->sendMail($to, $template, $templateParams, $sender);
+        }
+        catch (Exception $e) {
+            Mage::helper('csgiftcard')->cslog($e->getMessage());
+            throw new Mage_Exception($e->getMessage());            
+        }
+        
+    }
     
     public function sendMail($to, $template, $templateParams, $sender)
     {
-        $storeId   = Mage::app()->getStore()->getId();
         $mailer    = Mage::getModel('core/email_template_mailer');
         $emailInfo = Mage::getModel('core/email_info');
         $emailInfo->addTo($to['email'], $to['name']);
         $mailer->addEmailInfo($emailInfo);
-        $mailer->setSender(Mage::getStoreConfig($sender, $storeId));
-        $mailer->setStoreId($storeId);
+        $mailer->setSender($sender);       
+        $mailer->setStoreId($this->getStoreId());
         $mailer->setTemplateId((string) $template);
         $mailer->setTemplateParams($templateParams);
         $mailer->send();
     }
+    
+    public function getStoreId(){
+    	return Mage::app()->getStore()->getId();
+    }
+
     
     public function cslog($data)
     {

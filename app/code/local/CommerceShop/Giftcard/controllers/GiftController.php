@@ -74,6 +74,10 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     {
         return Mage::getSingleton('checkout/session');
     }
+
+    protected function _getCoreSession(){
+    	return Mage::getSingleton('core/session');
+    }
     
     public function searchForCode($id, $array)
     {
@@ -87,7 +91,35 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     }
     
     public function carddeliveryAction()
-    {
-        echo 'carddelivery';
+    {       
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    public function sendcardinfoAction()
+    {       
+        $post        = $this->getRequest()->getPost();
+        $to['name']=$post['recipientname']; 
+        $to['email']=$post['recipientemail']; 
+
+        $sender=$post['sender_name'];
+        $redeemUrl = Mage::getBaseUrl() . 'csgiftcard/gift/csredeem';
+        $templateParams   = array(
+                'gift_message' => $post['giftmessage'],
+                'card_redeem' => $redeemUrl
+            );
+        
+        $sender=array('email'=>(string) 'sample.dev@gmail.com','name'=> (string)'Ramki');
+
+    try
+      {
+       Mage::helper('csgiftcard')->sendGiftCardRecipientMail($to, $templateParams,$sender);
+       $this->_getCoreSession()->addSuccess($this->__("Recipient Mail Sent."));
+      }
+    catch(Exception $e){
+     $this->_getCoreSession()->addError($e->getMessage());	 
+     }
+
+     $this->_redirect('csgiftcard/gift/carddelivery');
     }
 }

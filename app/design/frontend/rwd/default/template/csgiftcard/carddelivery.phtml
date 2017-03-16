@@ -1,0 +1,43 @@
+<?php
+$action=Mage::getBaseUrl().'csgiftcard/gift/sendcardinfo';
+?>
+<div class="page-title">
+    <h1>Card Delivery</h1>
+</div>
+<form action="<?php echo $action;?>" id="csgift-carddelivery" method="post">
+    <div class="fieldset">       
+        <p class="required">* Required Fields</p>
+        <ul class="form-list">
+            <li class="fields">
+                <div class="field">
+                    <label for="recipientname" class="required"><em>*</em>Recipient Name</label>
+                    <div class="input-box">
+                        <input name="recipientname" id="recipientname" title="Recipient Name" value="" class="input-text required-entry" type="text">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="recipientemail" class="required"><em>*</em>Recipient Email</label>
+                    <div class="input-box">
+                        <input name="recipientemail" id="recipientemail" title="Recipient Email" value="" class="input-text required-entry validate-email" type="email" autocapitalize="off" autocorrect="off" spellcheck="false">
+                    </div>
+                </div>
+            </li>            
+            <li class="wide">
+                <label for="giftmessage" class="required"><em>*</em>Gift Message</label>
+                <div class="input-box">
+                    <textarea name="giftmessage" id="giftmessage" title="Gift Message" class="required-entry input-text" cols="5" rows="3"></textarea>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="buttons-set">
+        <input type="hidden" name="sender_name" id="sender_name" value="">
+        <button type="submit" title="Submit" class="button"><span><span>Submit</span></span></button>
+    </div>
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+    var csgiftcarddelivery = new VarienForm('csgift-carddelivery', true);
+//]]>
+</script>
