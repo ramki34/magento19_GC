@@ -1,0 +1,62 @@
+<?php 
+$barcodeString='J3D3C 5E655 87EPM RH5N6'; //sample sandbox card    
+$img=Mage::helper('csgiftcard')->getBarCode128($barcodeString);
+?>
+<div id='printpage'>
+<div class="page-title">
+    <h1>Your Giftcard Informations</h1>
+</div>
+ <div class="fieldset">               
+        <ul class="form-list">
+            <li class="fields">
+                
+                <div class="field">
+                    <label for="csgiftcard-no">Giftcard Number</label>
+                    <div class="input-box">
+                       <span><?php echo $barcodeString;?></span>
+                    </div>
+                </div>
+            </li>                       
+
+            <li class="fields">                
+                <div class="field">
+                    <label for="csgiftcard-no-barcode">Giftcard Barcode</label>
+                    <div class="csgiftcard-no-barcode">
+                       <img src="<?php echo $img;?>" alt="Gift Card Barcode"/>
+                    </div>
+                </div>
+            </li>                       
+        </ul>
+    </div>
+    <div class="buttons-set">
+        <input type="hidden" name="sender_name" id="sender_name" value="">
+        <button type="button" id= "send_email" title="Send Email" class="button"><span><span>Send Email</span></span></button>
+        <button type="button" onclick="printContent('printpage')" title="Print" class="button"><span><span>Print</span></span></button>
+    </div>
+</div>
+
+<script type="text/javascript">
+jQuery("#send_email").click(function(){
+                var data={};
+                data['card_no'] = '<?php echo $barcodeString;?>';
+                data['barcode_img'] = '<?php echo $img;?>';
+               
+                jQuery.ajax({
+                  url:'<?php echo Mage::getBaseUrl().'csgiftcard/gift/cssendcard';?>',
+                  type:'POST',
+                  data:data,
+                  dataType:'json',
+                  success: function(result) { 
+                  	location.href=result.url;                  	
+                      }                 
+                    });
+});
+
+function printContent(el){
+	var restorepage = document.body.innerHTML;
+	var printcontent = document.getElementById(el).innerHTML;
+	document.body.innerHTML = printcontent;
+	window.print();
+	document.body.innerHTML = restorepage;
+}       
+</script>

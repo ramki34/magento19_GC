@@ -1,0 +1,25 @@
+<?php
+$action=Mage::getBaseUrl().'csgiftcard/gift/csredeemsuccess';
+?>
+
+<div class="page-title">
+    <h1>Redeem Giftcard</h1>
+</div>
+
+<form action="<?php echo $action;?>" id="csgift-cardredeem" method="post">
+    <div class="fieldset">    
+        <ul class="form-list">             
+            <li class="wide">
+                <label for="cs_giftmessage">Gift Message</label>
+                <div class="input-box">
+                    <textarea name="cs_giftmessage" id="cs_giftmessage" title="Gift Message" cols="5" rows="3" readonly>
+                    Test Message Giftcard
+                    </textarea>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="buttons-set">        
+        <button type="submit" title="Get My Card" class="button"><span><span>Get My Card</span></span></button>
+    </div>
+</form>

@@ -95,7 +95,8 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
         $this->loadLayout();
         $this->renderLayout();
     }
-
+   
+   //send gift to recipient.
     public function sendcardinfoAction()
     {       
         $post        = $this->getRequest()->getPost();
@@ -119,7 +120,48 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     catch(Exception $e){
      $this->_getCoreSession()->addError($e->getMessage());	 
      }
-
      $this->_redirect('csgiftcard/gift/carddelivery');
+    }
+
+   public function csredeemAction()
+    {
+     $this->loadLayout();
+     $this->renderLayout();
+    }
+
+    public function csredeemsuccessAction()
+    {   
+     $this->loadLayout();
+     $this->renderLayout();
+    }
+
+    //Recipient send card informations self mail for later use
+    public function cssendcardAction(){
+    	$post        = $this->getRequest()->getPost(); 
+        // $to['name']=$post['recipientname']; 
+        // $to['email']=$post['recipientemail']; 
+
+        $to['name']='Sample'; 
+        $to['email']='ramakrishnan.s@innoppl.com';
+        
+        $sender=$to;
+        
+        $templateParams   = array(
+                'giftcard_no' => $post['card_no'],
+                'giftcard_barcode' => $post['barcode_img']
+            );   
+        
+    try
+      {
+       Mage::helper('csgiftcard')->sendCardInfoRecipientMail($to, $templateParams,$sender);
+       $this->_getCoreSession()->addSuccess($this->__("Card informations successfully sent. Please check your Mail."));
+       }
+
+    catch(Exception $e){
+     $this->_getCoreSession()->addError($e->getMessage());	 
+     }
+   	 $result['url']=Mage::getBaseUrl().'csgiftcard/gift/csredeemsuccess';
+   	 echo json_encode($result);
+     exit;
     }
 }

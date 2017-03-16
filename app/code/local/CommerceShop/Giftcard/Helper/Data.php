@@ -5,6 +5,8 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     CONST CS_GIFT_PRODUCT_TYPE = 'csgiftcard';
     CONST CS_GIFT_PURCHASE_EMAIL_TEMPLATE = 'csgiftcard_purchase_email_template';
     CONST CS_GIFT_RECIPIENT_EMAIL_TEMPLATE = 'csgiftcard_recipient_email_template';    
+    CONST CS_GIFT_RECIPIENT_EMAIL_COPY_TEMPLATE = 'csgiftcard_recipient_email_copy_template';    
+
     CONST XML_PATH_UPDATE_EMAIL_IDENTITY = 'sales_email/order_comment/identity';
     
     public function getGiftCardValue()
@@ -70,8 +72,22 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
             throw new Mage_Exception($e->getMessage());            
         }
         
+    } 
+
+    //Recipient send card informations self mail for later use    
+     public function sendCardInfoRecipientMail($to, $templateParams, $sender = null)
+    {
+        $template = self::CS_GIFT_RECIPIENT_EMAIL_COPY_TEMPLATE;
+        $sender   = $sender ? $sender : Mage::getStoreConfig(self::XML_PATH_UPDATE_EMAIL_IDENTITY, $this->getStoreId());       
+        try {
+            $this->sendMail($to, $template, $templateParams, $sender);
+        }
+        catch (Exception $e) {
+            Mage::helper('csgiftcard')->cslog($e->getMessage());
+            throw new Mage_Exception($e->getMessage());            
+        }
+        
     }
-    
     public function sendMail($to, $template, $templateParams, $sender)
     {
         $mailer    = Mage::getModel('core/email_template_mailer');
@@ -87,6 +103,15 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     
     public function getStoreId(){
     	return Mage::app()->getStore()->getId();
+    }
+
+
+    public function getBarCode128($barcodeString)
+    {
+    	$file = Zend_Barcode::draw('code128', 'image', array('text' => $barcodeString), array()); 
+        $store_image = imagepng($file,Mage::getBaseDir('media')."/Cs_Barcode/$barcodeString.png");    
+        if($store_image)  
+        return Mage::getBaseUrl('media')."/Cs_Barcode/$barcodeString.png";
     }
 
     
