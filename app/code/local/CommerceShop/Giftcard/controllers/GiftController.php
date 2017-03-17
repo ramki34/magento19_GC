@@ -92,6 +92,21 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     
     public function carddeliveryAction()
     {       
+    	$req=$this->getRequest()->getParams();
+    	if(!$req){
+    		$this->_getCoreSession()->addError("You didn't Purchased a Giftcard");
+    		$this->_redirect('checkout/cart');
+    		return;
+    	}
+    	$param=array_keys($req)[0];
+    	$order_id = Mage::helper('core')->decrypt($param);
+    	$isAvailable=Mage::getModel('csgiftcard/order')->load($order_id,'order_id')->getEntityId();
+    	if(!$isAvailable){
+    		$this->_getCoreSession()->addError("Invalid Order");
+    		$this->_redirect('checkout/cart');
+    		return;
+    	}
+    	Mage::register('csgiftorder_no',$order_id);
         $this->loadLayout();
         $this->renderLayout();
     }
@@ -100,27 +115,32 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     public function sendcardinfoAction()
     {       
         $post        = $this->getRequest()->getPost();
-        $to['name']=$post['recipientname']; 
-        $to['email']=$post['recipientemail']; 
-
-        $sender=$post['sender_name'];
+        if(!$post){
+         $this->_getCoreSession()->addError('Please enter your Recipient informations');
+         $this->loadLayout();
+         $this->renderLayout();        
+         return;
+     }
+               
+        $sender=array('email'=>(string) $post['sender_email'],'name'=> (string) $post['sender_name']);
+        $to['name']=$post['recipient_name']; 
+        $to['email']=$post['recipient_email'];        
         $redeemUrl = Mage::getBaseUrl() . 'csgiftcard/gift/csredeem';
         $templateParams   = array(
-                'gift_message' => $post['giftmessage'],
+                'gift_message' => trim($post['gift_message']),
                 'card_redeem' => $redeemUrl
             );
-        
-        $sender=array('email'=>(string) 'sample.dev@gmail.com','name'=> (string)'Ramki');
-
     try
       {
        Mage::helper('csgiftcard')->sendGiftCardRecipientMail($to, $templateParams,$sender);
-       $this->_getCoreSession()->addSuccess($this->__("Recipient Mail Sent."));
+       $this->_getCoreSession()->addSuccess($this->__("You have successfully sent the Giftcard informations to Recipient account."));
+       Mage::getModel('csgiftcard/recipient')->addData($post)->save();
       }
     catch(Exception $e){
      $this->_getCoreSession()->addError($e->getMessage());	 
      }
-     $this->_redirect('csgiftcard/gift/carddelivery');
+    $this->loadLayout();
+    $this->renderLayout();
     }
 
    public function csredeemAction()

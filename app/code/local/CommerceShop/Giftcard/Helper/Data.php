@@ -33,6 +33,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     public function isGiftCardPurchased($order)
     {
         $allVisibleItems = $order->getAllVisibleItems();
+        $giftItems=0;
         foreach ($allVisibleItems as $item) {
             if ($item->getProductType() == self::CS_GIFT_PRODUCT_TYPE) {
                 $giftItems[] = array(
@@ -111,9 +112,20 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     	$file = Zend_Barcode::draw('code128', 'image', array('text' => $barcodeString), array()); 
         $store_image = imagepng($file,Mage::getBaseDir('media')."/Cs_Barcode/$barcodeString.png");    
         if($store_image)  
-        return Mage::getBaseUrl('media')."/Cs_Barcode/$barcodeString.png";
+        return Mage::getBaseUrl('media')."Cs_Barcode/$barcodeString.png";
     }
 
+
+    public function getSenderInfo($orderId){
+    $order=Mage::getModel('sales/order')->load($orderId);
+    $info['sender_email']=$order->getData('customer_email');
+    $info['sender_name']=$order->getData('customer_firstname').' '.$order->getData('customer_firstname');   
+    return $info;
+    }
+
+    public function saveSenderInfo(){
+
+    }
     
     public function cslog($data)
     {

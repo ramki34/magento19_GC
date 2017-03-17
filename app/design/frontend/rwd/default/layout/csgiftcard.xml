@@ -12,6 +12,12 @@
         </reference>
     </csgiftcard_gift_carddelivery>
 
+    <csgiftcard_gift_sendcardinfo>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_carddelivery_success" template="csgiftcard/carddelivery_success.phtml" />
+        </reference>
+    </csgiftcard_gift_sendcardinfo>
+
 
     <csgiftcard_gift_csredeem>
          <reference name="content">

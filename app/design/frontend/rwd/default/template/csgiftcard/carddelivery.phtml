@@ -1,5 +1,7 @@
 <?php
-$action=Mage::getBaseUrl().'csgiftcard/gift/sendcardinfo';
+$action=Mage::getBaseUrl().'csgiftcard/gift/sendcardinfo'; 
+$csgiftorder_no=Mage::registry('csgiftorder_no');
+$data=Mage::helper('csgiftcard')->getSenderInfo($csgiftorder_no);
 ?>
 <div class="page-title">
     <h1>Card Delivery</h1>
@@ -10,28 +12,30 @@ $action=Mage::getBaseUrl().'csgiftcard/gift/sendcardinfo';
         <ul class="form-list">
             <li class="fields">
                 <div class="field">
-                    <label for="recipientname" class="required"><em>*</em>Recipient Name</label>
+                    <label for="recipient_name" class="required"><em>*</em>Recipient Name</label>
                     <div class="input-box">
-                        <input name="recipientname" id="recipientname" title="Recipient Name" value="" class="input-text required-entry" type="text">
+                        <input name="recipient_name" id="recipient_name" title="Recipient Name" value="" class="input-text required-entry" type="text">
                     </div>
                 </div>
                 <div class="field">
-                    <label for="recipientemail" class="required"><em>*</em>Recipient Email</label>
+                    <label for="recipient_email" class="required"><em>*</em>Recipient Email</label>
                     <div class="input-box">
-                        <input name="recipientemail" id="recipientemail" title="Recipient Email" value="" class="input-text required-entry validate-email" type="email" autocapitalize="off" autocorrect="off" spellcheck="false">
+                        <input name="recipient_email" id="recipient_email" title="Recipient Email" value="" class="input-text required-entry validate-email" type="email" autocapitalize="off" autocorrect="off" spellcheck="false">
                     </div>
                 </div>
             </li>            
             <li class="wide">
                 <label for="giftmessage" class="required"><em>*</em>Gift Message</label>
                 <div class="input-box">
-                    <textarea name="giftmessage" id="giftmessage" title="Gift Message" class="required-entry input-text" cols="5" rows="3"></textarea>
+                    <textarea name="gift_message" id="gift_message" title="Gift Message" class="required-entry input-text" cols="5" rows="3"></textarea>
                 </div>
             </li>
         </ul>
     </div>
     <div class="buttons-set">
-        <input type="hidden" name="sender_name" id="sender_name" value="">
+        <input type="hidden" name="sender_name" id="sender_name" value="<?php echo $data['sender_name'];?>">
+        <input type="hidden" name="sender_email" id="sender_email" value="<?php echo $data['sender_email'];?>">
+        <input type="hidden" name="order_id" id="order_id" value="<?php echo $csgiftorder_no;?>">
         <button type="submit" title="Submit" class="button"><span><span>Submit</span></span></button>
     </div>
 </form>

@@ -2,7 +2,7 @@
 <config>
     <modules>
         <CommerceShop_Giftcard>
-            <version>0.2.0</version>
+            <version>0.3.0</version>
         </CommerceShop_Giftcard>
     </modules>    
     <frontend>
@@ -37,8 +37,20 @@
     </blocks> 
      <models>
             <csgiftcard>
-                <class>CommerceShop_Giftcard_Model</class>               
+                <class>CommerceShop_Giftcard_Model</class>
+                <resourceModel>csgiftcard_resource</resourceModel>               
             </csgiftcard>
+            <csgiftcard_resource>
+                <class>CommerceShop_Giftcard_Model_Resource</class>
+                <entities>                    
+                    <recipient>
+                        <table>cs_giftcard_recipient</table>
+                    </recipient>
+                    <order>
+                        <table>cs_giftcard_order</table>
+                    </order>
+                </entities>
+            </csgiftcard_resource>
      </models>    
     <events>
       <sales_order_place_after>
