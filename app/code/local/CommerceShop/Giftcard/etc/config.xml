@@ -45,10 +45,7 @@
                 <entities>                    
                     <recipient>
                         <table>cs_giftcard_recipient</table>
-                    </recipient>
-                    <order>
-                        <table>cs_giftcard_order</table>
-                    </order>
+                    </recipient>                    
                 </entities>
             </csgiftcard_resource>
      </models>    
