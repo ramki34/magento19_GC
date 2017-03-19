@@ -16,8 +16,7 @@ class CommerceShop_Giftcard_Model_Observer
                 'card_deliver' => $cardDeliveryPage,
                 'customer_name' => $to['name']
             );
-            Mage::helper('csgiftcard')->sendGiftCardPurchaseMail($to, $templateParams);  
-            Mage::getModel('csgiftcard/order')->setOrderId($order->getId())->save();          
+            Mage::helper('csgiftcard')->sendGiftCardPurchaseMail($to, $templateParams);              
         }
     }    
 }

@@ -98,9 +98,9 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     		$this->_redirect('checkout/cart');
     		return;
     	}
-    	$param=array_keys($req)[0];
-    	$order_id = Mage::helper('core')->decrypt($param);
-    	$isAvailable=Mage::getModel('csgiftcard/order')->load($order_id,'order_id')->getEntityId();
+    	$param=array_keys($req)[0];    	
+    	$order_id = Mage::helper('core')->decrypt($param);    	
+    	$isAvailable=Mage::getModel('sales/order')->load($order_id)->getEntityId();
     	if(!$isAvailable){
     		$this->_getCoreSession()->addError("Invalid Order");
     		$this->_redirect('checkout/cart');
@@ -124,8 +124,12 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
                
         $sender=array('email'=>(string) $post['sender_email'],'name'=> (string) $post['sender_name']);
         $to['name']=$post['recipient_name']; 
-        $to['email']=$post['recipient_email'];        
-        $redeemUrl = Mage::getBaseUrl() . 'csgiftcard/gift/csredeem';
+        $to['email']=$post['recipient_email'];   
+
+         $urlParam='000000'.$post['order_id'];
+         $encryptedUrlParam = Mage::helper('core')->encrypt($urlParam);
+
+        $redeemUrl = Mage::getBaseUrl() . 'csgiftcard/gift/csredeem?'.$encryptedUrlParam;
         $templateParams   = array(
                 'gift_message' => trim($post['gift_message']),
                 'card_redeem' => $redeemUrl
@@ -145,12 +149,38 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
 
    public function csredeemAction()
     {
-     $this->loadLayout();
-     $this->renderLayout();
+
+     $req=$this->getRequest()->getParams();
+    	if(!$req){
+    		$this->_getCoreSession()->addError("Invalid Page");
+    		$this->_redirect('checkout/cart');
+    		return;
+    	}
+    	$param=array_keys($req)[0];
+    	$order_id = Mage::helper('core')->decrypt($param);
+    	$recipientModel=Mage::getModel('csgiftcard/recipient')->load($order_id,'order_id');
+    	$isAvailable=$recipientModel->getEntityId();
+    	if(!$isAvailable){
+    		$this->_getCoreSession()->addError("Invalid Order");
+    		$this->_redirect('checkout/cart');
+    		return;
+    	}
+    	$gift['gift_message']=$recipientModel->getGiftMessage();
+    	$gift['order_id']=$order_id;
+    	Mage::register('giftinfo',$gift);
+        $this->loadLayout();
+        $this->renderLayout();
     }
 
     public function csredeemsuccessAction()
-    {   
+    {
+            $order_id=$this->getRequest()->getPost('order_id');
+        	if(!$order_id){
+    		$this->_getCoreSession()->addError("Invalid Page");
+    		$this->_redirect('checkout/cart');
+    		return;
+    	}
+     Mage::register('order_id',$order_id);
      $this->loadLayout();
      $this->renderLayout();
     }
@@ -158,12 +188,8 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
     //Recipient send card informations self mail for later use
     public function cssendcardAction(){
     	$post        = $this->getRequest()->getPost(); 
-        // $to['name']=$post['recipientname']; 
-        // $to['email']=$post['recipientemail']; 
-
-        $to['name']='Sample'; 
-        $to['email']='ramakrishnan.s@innoppl.com';
-        
+        $to['name']=$post['recipient_name']; 
+        $to['email']=$post['recipient_email']; 
         $sender=$to;
         
         $templateParams   = array(
@@ -173,12 +199,14 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
         
     try
       {
-       Mage::helper('csgiftcard')->sendCardInfoRecipientMail($to, $templateParams,$sender);
-       $this->_getCoreSession()->addSuccess($this->__("Card informations successfully sent. Please check your Mail."));
+       Mage::helper('csgiftcard')->sendCardInfoRecipientMail($to, $templateParams,$sender);       
+       $result['success']=1;
+       $result['msg']='Card informations successfully sent. Please check your Mail';        
        }
 
     catch(Exception $e){
-     $this->_getCoreSession()->addError($e->getMessage());	 
+    	$result['success']=0;
+    	$result['msg']=$e->getMessage();    
      }
    	 $result['url']=Mage::getBaseUrl().'csgiftcard/gift/csredeemsuccess';
    	 echo json_encode($result);

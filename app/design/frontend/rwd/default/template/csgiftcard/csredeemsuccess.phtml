@@ -1,7 +1,24 @@
 <?php 
+$orderId=Mage::registry('order_id');
+$recipientModel=Mage::getModel('csgiftcard/recipient')->load($orderId,'order_id');
+//based on the order id need to make the api call for create new giftcard
 $barcodeString='J3D3C 5E655 87EPM RH5N6'; //sample sandbox card    
 $img=Mage::helper('csgiftcard')->getBarCode128($barcodeString);
 ?>
+
+
+<ul class="messages mail-success-msg" style="display:none">
+   <li class="success-msg">
+      <ul>        
+         <li><span id='mail-message'></span></li>
+      </ul>
+   </li>
+</ul>
+
+<ul class="messages mail-error-msg" style="display:none">
+<li class="error-msg"><ul><li><span id='mail-error'></span></li></ul></li>
+</ul>
+
 <div id='printpage'>
 <div class="page-title">
     <h1>Your Giftcard Informations</h1>
@@ -40,16 +57,26 @@ jQuery("#send_email").click(function(){
                 var data={};
                 data['card_no'] = '<?php echo $barcodeString;?>';
                 data['barcode_img'] = '<?php echo $img;?>';
+                data['recipient_name'] = "<?php echo $recipientModel['recipient_name'];?>";
+                data['recipient_email'] = "<?php echo $recipientModel['recipient_email'];?>";               
                
                 jQuery.ajax({
                   url:'<?php echo Mage::getBaseUrl().'csgiftcard/gift/cssendcard';?>',
                   type:'POST',
                   data:data,
                   dataType:'json',
-                  success: function(result) { 
-                  	location.href=result.url;                  	
-                      }                 
-                    });
+                  success: function(result) {   
+                  if(result.success){  
+                  jQuery('#mail-message').text(result.msg);               
+                  jQuery('.mail-success-msg').show();
+                }
+                else
+                {
+                 jQuery('#mail-error').text(result.msg);               
+                 jQuery('.mail-error-msg').show();
+                }
+                  }                 
+                    });                
 });
 
 function printContent(el){

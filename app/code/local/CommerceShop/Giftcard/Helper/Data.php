@@ -33,7 +33,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     public function isGiftCardPurchased($order)
     {
         $allVisibleItems = $order->getAllVisibleItems();
-        $giftItems=0;
+        $giftItems=array();
         foreach ($allVisibleItems as $item) {
             if ($item->getProductType() == self::CS_GIFT_PRODUCT_TYPE) {
                 $giftItems[] = array(
@@ -119,7 +119,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     public function getSenderInfo($orderId){
     $order=Mage::getModel('sales/order')->load($orderId);
     $info['sender_email']=$order->getData('customer_email');
-    $info['sender_name']=$order->getData('customer_firstname').' '.$order->getData('customer_firstname');   
+    $info['sender_name']=$order->getData('customer_firstname').' '.$order->getData('customer_lastname');   
     return $info;
     }
 
