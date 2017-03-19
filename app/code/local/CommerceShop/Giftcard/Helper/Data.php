@@ -8,6 +8,14 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     CONST CS_GIFT_RECIPIENT_EMAIL_COPY_TEMPLATE = 'csgiftcard_recipient_email_copy_template';    
 
     CONST XML_PATH_UPDATE_EMAIL_IDENTITY = 'sales_email/order_comment/identity';
+
+
+    //API constants
+    CONST API_URL =  "https://sandbox.giftcardprocessing.net/api/processor"; //Sandbox URL //"https://giftcardprocessing.net/api/processor"; //LIVE URL
+	CONST API_CLIENT = "atbbq_web_staging";
+	CONST API_KEY = "idaBR5d4pKrCJ*FQUYs99D6maulSR!Tu";
+	 
+
     
     public function getGiftCardValue()
     {
@@ -130,6 +138,62 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     public function cslog($data)
     {
         Mage::log($data, null, 'csgiftcard.log');
+    }
+
+    //Api related functions
+    public function getGiftCardBalance($cardNo){
+    	$cardType='CardInfo';
+    	$req=$this->prepareXmlReq($cardNo,$cardType);
+    	$this->cslog('API:getGiftCardBalance req==============');
+    	$this->cslog($req);    	
+    	$res=$this->makeApiCall($req);
+    	$this->cslog('API:getGiftCardBalance RESPONSE==============');
+    	$this->cslog($res);
+
+    	if($res->responseType == "Error"){    		
+    		$result['error']=(string) $res->responseData->errorMessage;
+    		return $result;
+    	}
+		 return $res->responseData->balance;		
+
+    }
+
+    public function prepareXmlReq($cardNo,$cardType){
+         $requestData = '<cardNumber>'.$cardNo.'</cardNumber>';
+    	 $requestXML = '<?xml version="1.0" encoding="UTF-8"?>
+				<request>
+					<authentication>
+						<clientId>'.self::API_CLIENT.'</clientId>
+						<clientApiKey>'.self::API_KEY.'</clientApiKey>
+					</authentication>
+					<requestType>'.$cardType.'</requestType>
+					<requestData>
+						'.$requestData.'
+					</requestData>
+				</request>';
+		return $requestXML;
+    }
+
+
+    public function makeApiCall($requestXML){ 					
+			try{
+				$ch = curl_init(); 
+				curl_setopt($ch, CURLOPT_URL,self::API_URL);
+				curl_setopt($ch, CURLOPT_VERBOSE, 1);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+				curl_setopt($ch, CURLOPT_POSTFIELDS, 'request='.$requestXML);
+				$response = curl_exec($ch);
+			    curl_close($ch); 
+			    $responseXml = simplexml_load_string($response);
+			    return $responseXml;
+			}
+			catch(Exception $e){
+				$this->cslog($e->getMessage());
+			}						
+							
     }
     
 }
