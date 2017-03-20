@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<layout version="1.0.0">
+    <checkout_cart_index>
+         <reference name="checkout.cart">
+            <block type="csgiftcard/gift" name="csgiftcard_form" template="csgiftcard/cart/form.phtml" />
+        </reference>
+    </checkout_cart_index>
+
+    <csgiftcard_gift_carddelivery>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_carddelivery_form" template="csgiftcard/carddelivery.phtml" />
+        </reference>
+    </csgiftcard_gift_carddelivery>
+
+    <csgiftcard_gift_sendcardinfo>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_carddelivery_success" template="csgiftcard/carddelivery_success.phtml" />
+        </reference>
+    </csgiftcard_gift_sendcardinfo>
+
+
+    <csgiftcard_gift_csredeem>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_csredeem" template="csgiftcard/csredeem.phtml" />
+        </reference>
+    </csgiftcard_gift_csredeem>    
+
+    <csgiftcard_gift_csredeemsuccess>
+         <reference name="content">
+            <block type="core/template" name="csgiftcard_csredeemsuccess" template="csgiftcard/csredeemsuccess.phtml" />
+        </reference>
+    </csgiftcard_gift_csredeemsuccess>    
+</layout>
+
+
+
+
+
