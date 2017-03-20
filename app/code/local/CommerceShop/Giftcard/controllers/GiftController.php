@@ -13,6 +13,12 @@ class CommerceShop_Giftcard_GiftController extends Mage_Core_Controller_Front_Ac
             $this->_redirect('checkout/cart');
             return;
         }
+        if($giftBal==0){
+            $this->_getSession()->addError('Entered Gift card value is 0. Please try other giftcards');
+            $this->_redirect('checkout/cart');
+            return;
+        }
+
         $newgiftBal  = $giftBal;        
         
         $quote                  = Mage::getSingleton('checkout/session')->getQuote();

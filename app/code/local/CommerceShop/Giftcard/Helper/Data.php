@@ -131,19 +131,29 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
     return $info;
     }
 
-    public function saveSenderInfo(){
-
-    }
-    
+       
     public function cslog($data)
     {
         Mage::log($data, null, 'csgiftcard.log');
     }
 
     //Api related functions
+    public function isGiftCardsUsedInOrder($order){    	
+        $giftCards = $order->getData('cs_gift_card');        
+        if (!$giftCards)
+        	return false;
+        $cards = unserialize($giftCards);
+        foreach ($cards as $info) {
+           $giftInfo[$info['newgiftCode']] = -$info['balance'];
+        }
+        return $giftInfo;	
+    }
+
+
     public function getGiftCardBalance($cardNo){
     	$cardType='CardInfo';
-    	$req=$this->prepareXmlReq($cardNo,$cardType);
+    	$requestData = '<cardNumber>'.$cardNo.'</cardNumber>';
+    	$req=$this->prepareXmlReq($cardType,$requestData);
     	$this->cslog('API:getGiftCardBalance req==============');
     	$this->cslog($req);    	
     	$res=$this->makeApiCall($req);
@@ -158,8 +168,35 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
 
     }
 
-    public function prepareXmlReq($cardNo,$cardType){
-         $requestData = '<cardNumber>'.$cardNo.'</cardNumber>';
+   public function makeDebitGiftCards($debitInfo,$orderId){
+    	$cardType='CardTransaction';
+    	$requestData ='';
+    	foreach($debitInfo as $cardNo => $bal){
+          $requestData .= '<cardNumber>'.$cardNo.'</cardNumber>
+    	               <transactionType>debit</transactionType>
+                       <transactionAmount>'.$bal.'</transactionAmount>
+                        <note>Invoice #'.$orderId.'</note>';
+    	}
+    	
+
+    	$req=$this->prepareXmlReq($cardType,$requestData);
+    	$this->cslog('API:debitGiftCards req==============');
+    	$this->cslog($req);    	
+    	$res=$this->makeApiCall($req);
+    	$this->cslog('API:debitGiftCards RESPONSE==============');
+    	$this->cslog($res);
+
+    	if($res->responseType == "Error"){    		
+    		$result['error']=(string) $res->responseData->errorMessage;
+    		return $result;
+    	}
+		 return $res->responseData;		
+
+    }
+
+
+
+    public function prepareXmlReq($cardType,$requestData){         
     	 $requestXML = '<?xml version="1.0" encoding="UTF-8"?>
 				<request>
 					<authentication>
@@ -174,6 +211,7 @@ class CommerceShop_Giftcard_Helper_Data extends Mage_Core_Helper_Abstract
 		return $requestXML;
     }
 
+    
 
     public function makeApiCall($requestXML){ 					
 			try{

@@ -16,7 +16,10 @@ class CommerceShop_Giftcard_Model_Observer
                 'card_deliver' => $cardDeliveryPage,
                 'customer_name' => $to['name']
             );
-            Mage::helper('csgiftcard')->sendGiftCardPurchaseMail($to, $templateParams);              
+            Mage::helper('csgiftcard')->sendGiftCardPurchaseMail($to, $templateParams);            
         }
+            //make the debit call for applied giftcards
+            if($debitInfo=Mage::helper('csgiftcard')->isGiftCardsUsedInOrder($order))
+              Mage::helper('csgiftcard')->makeDebitGiftCards($debitInfo,$order->getIncrementId());
     }    
 }
