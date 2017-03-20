@@ -119,5 +119,13 @@
             </quote>
         </sales>
 
+         <fieldsets>
+            <sales_convert_quote>
+                <cs_gift_card>
+                    <to_order>*</to_order>
+                </cs_gift_card>                
+            </sales_convert_quote>
+        </fieldsets>
+
 	</global>    
 </config>
